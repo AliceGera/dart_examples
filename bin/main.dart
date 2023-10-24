@@ -5,8 +5,14 @@ import 'package:cli/algorithms/knapsack_problem.dart';
 import 'package:cli/algorithms/linked_list.dart';
 import 'package:cli/algorithms/linked_list_with_dart_help.dart';
 import 'package:cli/algorithms/quick_sort.dart';
+import 'package:cli/design_patterns/behavior/observer.dart';
 import 'dart:collection';
 import 'dart:math' as math;
+
+import 'package:cli/design_patterns/behavior/state.dart';
+import 'package:cli/design_patterns/creational/builder.dart';
+import 'package:cli/design_patterns/creational/factory_method.dart';
+import 'package:cli/design_patterns/structural/decorator.dart';
 
 void main() {
   /////////////////////////////////////////////////////////
@@ -126,4 +132,43 @@ void main() {
   linkedList.remove(25);
 
   linkedList.printList();
+  /////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// DESIGN PATTERNS ////////////////////////////////////////
+
+//factory
+  final deliveryByTruck = Delivery(DeliveryType.truck);
+  final deliveryByShip = Delivery(DeliveryType.ship);
+  deliveryByTruck.delivery();
+  deliveryByShip.delivery();
+
+//builder
+  var pizzaBuilder = PizzaBuilder();
+  pizzaBuilder.crust = "gold plated";
+  pizzaBuilder.diameter = 30;
+  pizzaBuilder.toppings = {"anchovies", "caviar", "diamonds"};
+  var luxuriousPizza = pizzaBuilder.build();
+  print("Wow! $luxuriousPizza");
+  assert(luxuriousPizza.toString() == "A delicious 30\n pizza with gold plated crust covered in anchovies, caviar, diamonds, and cheese");
+
+//decorator
+  final square = Square();
+  print(square.draw());
+  final greenSquare = GreenShapeDecorator(square);
+  print(greenSquare.draw());
+  final blueGreenSquare = BlueShapeDecorator(greenSquare);
+  print(blueGreenSquare.draw());
+
+//observer
+  var personAlice = Observer("Alice");
+  var barista = CoffeeMaker(List.from([personAlice]));
+  var personKate = Observer("Kate");
+  barista.registerObserver(personKate);
+  barista.brew();
+
+//state
+  var lightSwitch = Stateful(StatusOff());
+  print("The light switch is ${lightSwitch.state}.");
+  print("Toggling the light switch");
+  lightSwitch.touch();
+  print("The light switch is ${lightSwitch.state}.");
 }
