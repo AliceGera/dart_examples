@@ -13,8 +13,9 @@ import 'package:cli/design_patterns/behavior/state.dart';
 import 'package:cli/design_patterns/creational/builder.dart';
 import 'package:cli/design_patterns/creational/factory_method.dart';
 import 'package:cli/design_patterns/structural/decorator.dart';
+import 'package:cli/future/future.dart';
 
-void main() {
+Future<void> main() async {
   /////////////////////////////////////////////////////////
   //////////////////////// О О П //////////////////////////
   FrontEndDeveloper frontEndDeveloper = FrontEndDeveloper('Maks');
@@ -133,15 +134,15 @@ void main() {
 
   linkedList.printList();
   /////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////// DESIGN PATTERNS ////////////////////////////////////////
+  //////////////////////////// DESIGN PATTERNS ////////////////////////////////////////
 
-//factory
+  //factory
   final deliveryByTruck = Delivery(DeliveryType.truck);
   final deliveryByShip = Delivery(DeliveryType.ship);
   deliveryByTruck.delivery();
   deliveryByShip.delivery();
 
-//builder
+  //builder
   var pizzaBuilder = PizzaBuilder();
   pizzaBuilder.crust = "gold plated";
   pizzaBuilder.diameter = 30;
@@ -150,7 +151,7 @@ void main() {
   print("Wow! $luxuriousPizza");
   assert(luxuriousPizza.toString() == "A delicious 30\n pizza with gold plated crust covered in anchovies, caviar, diamonds, and cheese");
 
-//decorator
+  //decorator
   final square = Square();
   print(square.draw());
   final greenSquare = GreenShapeDecorator(square);
@@ -158,17 +159,31 @@ void main() {
   final blueGreenSquare = BlueShapeDecorator(greenSquare);
   print(blueGreenSquare.draw());
 
-//observer
+  //observer
   var personAlice = Observer("Alice");
   var barista = CoffeeMaker(List.from([personAlice]));
   var personKate = Observer("Kate");
   barista.registerObserver(personKate);
   barista.brew();
 
-//state
+  //state
   var lightSwitch = Stateful(StatusOff());
   print("The light switch is ${lightSwitch.state}.");
   print("Toggling the light switch");
   lightSwitch.touch();
   print("The light switch is ${lightSwitch.state}.");
+
+  /////////////////////////  F U T U R E  ////////////////////////
+  ////////////////////////////////////////////////////////////////
+  //Может работать с async/await и then синтаксисом
+  methodA();
+  await methodB();
+  await methodC('main');
+  methodD();
+  //Ожидание, выполнено успешно, выполнено с ошибкой
+  //Знает, в каких состояниях может находиться Future
+  //и показал обработку каждого из них в коде.
+  //Ожидание, выполнено успешно, выполнено с ошибкой
+  await printOrderMessage();
+
 }
