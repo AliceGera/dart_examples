@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'package:cli/rest_api/rest_api.dart';
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:cli/streame/streame.dart';
 import 'package:cli/OOP/association.dart';
 import 'package:cli/OOP/oop.dart';
@@ -368,4 +371,52 @@ Future<void> main() async {
 
   var controller2 = (StreamController<int>()..add(2)).stream;
   controller2.listen(print);
+  //////////////////////////////////////////////////////
+//////////////////  R E S T   A P I  /////////////////
+
+  var url = Uri.parse('https://eightballapi.com/api/');
+  print(url);
+  var response = await http.get(url);
+  if (response.statusCode == 200) {
+    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    var reading = jsonResponse['reading'];
+    print('the answer: $reading.');
+  } else {
+    print('Request failed with status: ${response.statusCode}.');
+  }
+
+  Dio dio = Dio();
+  dio.options.baseUrl = "https://jsonplaceholder.typicode.com";
+  dio.options.responseType = ResponseType.json;
+  final newPost = await dio.post(
+    '/posts',
+    data: {
+      "title": 'foo1',
+      "body": 'bar212',
+      "userId": 12,
+    },
+  );
+  print('Dio post');
+  print(newPost);
+
+  final post1 = await dio.get('/posts/2');
+  print('Передал параметры/данные через url');
+  print(post1);
+
+  final post2 = await dio.get(
+    '/posts',
+    queryParameters: {'id': 2},
+  );
+  print('Передал параметры/данные через queryParameters');
+  print(post2);
+
+  const data = {'text': 'foo', 'value': 2, 'status': false, 'extra': null};
+  final String jsonString = jsonEncode(data);
+  print(jsonString); // {"text":"foo","value":2,"status":false,"extra":null}
+
+  final CustomClass cc = CustomClass(text: 'Dart', value: 123);
+  final jsonText = jsonEncode({'cc': cc},
+      toEncodable: (Object? value) => value is CustomClass ? CustomClass.toJson(value) : throw UnsupportedError('Cannot convert to JSON: $value'));
+  print(jsonText); // {"cc":{"text":"Dart","value":123}}
+
 }
