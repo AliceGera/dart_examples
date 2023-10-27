@@ -186,4 +186,24 @@ Future<void> main() async {
   //Ожидание, выполнено успешно, выполнено с ошибкой
   await printOrderMessage();
 
+  //конструкторы
+
+  //Future<T>.delayed()
+  Future.delayed(const Duration(seconds: 1), () {
+    print('Прошла одна секунда.'); // Печатает через 1 секунду.
+  });
+
+  //Future<T>.sync()
+  Future.sync(() => 5).then(print);
+
+  //Future<T>.microTask()
+  Future.microtask(() => 7).then(print);
+
+  //Future<T>.value constructor
+  final resultGetFuture = await getFuture();
+  print(resultGetFuture);
+
+  //Future<T>.error constructor
+  final error = await getFutureError();
+  print(error);
 }

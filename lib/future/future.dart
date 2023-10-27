@@ -41,3 +41,9 @@ Future<String> fetchUserOrder() {
           () => throw 'Cannot locate user order');
   return str;
 }
+Future<int> getFuture() {
+  return Future<int>.value(2021);
+}
+Future<int> getFutureError() {
+  return Future.error(Exception('Issue'));
+}
