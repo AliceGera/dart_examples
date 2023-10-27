@@ -14,6 +14,7 @@ import 'package:cli/design_patterns/creational/builder.dart';
 import 'package:cli/design_patterns/creational/factory_method.dart';
 import 'package:cli/design_patterns/structural/decorator.dart';
 import 'package:cli/future/future.dart';
+import 'package:cli/nullSafety/nullSafety.dart';
 
 Future<void> main() async {
   /////////////////////////////////////////////////////////
@@ -185,6 +186,42 @@ Future<void> main() async {
   //и показал обработку каждого из них в коде.
   //Ожидание, выполнено успешно, выполнено с ошибкой
   await printOrderMessage();
+
+  /////////////////////////////////////////////////////////////////
+  ///////////////////// n u l l   S a f e t y /////////////////////
+  // ?
+  String? name;
+  print(name);
+  name = "Tom";
+  print(name);
+  // !
+  int? a = 23;
+  int b = a!; // мы уверены, что a не равна null
+  print(b);
+  //??
+  int? number1 = 23;
+  int number2 = number1 ?? 0;
+  print(number2);        // 23
+
+  number1 = null;
+  number2 = number1 ?? 0;
+  print(number2);        // 0
+  // ?.
+  name=null;
+  print(name?.toUpperCase());
+  // вызов метода у nullable типа не работает
+  // поэтому нужно добавить ?
+  // !
+  print(name!.toUpperCase()); //exs
+  // дженерики
+  var box = Box<int?>.full(null);
+  print(box.unbox());
+  //map
+  var map = {'key': 'value'};
+  print(map['key']!.length); // OK.
+  // Using null safety, incorrectly:
+  //print(map['key'].length); // Error.
+
 
   //конструкторы
 
