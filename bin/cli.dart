@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
-
+import 'package:cli/streame/streame.dart';
 import 'package:cli/OOP/association.dart';
 import 'package:cli/OOP/oop.dart';
 import 'package:cli/SOLID/dependency_inversion_principle.dart';
@@ -12,7 +12,6 @@ import 'package:cli/algorithms/quick_sort.dart';
 import 'package:cli/design_patterns/behavior/observer.dart';
 import 'dart:collection';
 import 'dart:math' as math;
-
 import 'package:cli/design_patterns/behavior/state.dart';
 import 'package:cli/design_patterns/creational/builder.dart';
 import 'package:cli/design_patterns/creational/factory_method.dart';
@@ -353,5 +352,20 @@ Future<void> main() async {
   var mapFirst = {'a': 'apple', 'b': 'banana'};
   var mapSecond = {'c': 'cherry', 'd': 'date'};
   var combinedMap = {...mapFirst, ...mapSecond};
+  print("combinedMap");
   print(combinedMap);
+
+///////////////////// S T R E A M ////////////////////////
+
+  var stream = getStream();
+  stream.listen((event) => print('Data: $event'),
+      onDone: () => print('Done'), onError: (err) => print('Error: $err'));
+
+  var controller1 = StreamController<int>.broadcast();
+  controller1.stream.listen(print);
+  controller1.sink.add(1);
+  controller1.stream.listen(print);
+
+  var controller2 = (StreamController<int>()..add(2)).stream;
+  controller2.listen(print);
 }
