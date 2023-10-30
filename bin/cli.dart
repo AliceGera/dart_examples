@@ -13,8 +13,10 @@ import 'package:cli/design_patterns/behavior/state.dart';
 import 'package:cli/design_patterns/creational/builder.dart';
 import 'package:cli/design_patterns/creational/factory_method.dart';
 import 'package:cli/design_patterns/structural/decorator.dart';
+import 'package:cli/future/future.dart';
+import 'package:cli/nullSafety/nullSafety.dart';
 
-void main() {
+Future<void> main() async {
   /////////////////////////////////////////////////////////
   //////////////////////// О О П //////////////////////////
   FrontEndDeveloper frontEndDeveloper = FrontEndDeveloper('Maks');
@@ -133,15 +135,15 @@ void main() {
 
   linkedList.printList();
   /////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////// DESIGN PATTERNS ////////////////////////////////////////
+  //////////////////////////// DESIGN PATTERNS ////////////////////////////////////////
 
-//factory
+  //factory
   final deliveryByTruck = Delivery(DeliveryType.truck);
   final deliveryByShip = Delivery(DeliveryType.ship);
   deliveryByTruck.delivery();
   deliveryByShip.delivery();
 
-//builder
+  //builder
   var pizzaBuilder = PizzaBuilder();
   pizzaBuilder.crust = "gold plated";
   pizzaBuilder.diameter = 30;
@@ -150,7 +152,7 @@ void main() {
   print("Wow! $luxuriousPizza");
   assert(luxuriousPizza.toString() == "A delicious 30\n pizza with gold plated crust covered in anchovies, caviar, diamonds, and cheese");
 
-//decorator
+  //decorator
   final square = Square();
   print(square.draw());
   final greenSquare = GreenShapeDecorator(square);
@@ -158,17 +160,86 @@ void main() {
   final blueGreenSquare = BlueShapeDecorator(greenSquare);
   print(blueGreenSquare.draw());
 
-//observer
+  //observer
   var personAlice = Observer("Alice");
   var barista = CoffeeMaker(List.from([personAlice]));
   var personKate = Observer("Kate");
   barista.registerObserver(personKate);
   barista.brew();
 
-//state
+  //state
   var lightSwitch = Stateful(StatusOff());
   print("The light switch is ${lightSwitch.state}.");
   print("Toggling the light switch");
   lightSwitch.touch();
   print("The light switch is ${lightSwitch.state}.");
+
+  /////////////////////////  F U T U R E  ////////////////////////
+  ////////////////////////////////////////////////////////////////
+  //Может работать с async/await и then синтаксисом
+  methodA();
+  await methodB();
+  await methodC('main');
+  methodD();
+  //Ожидание, выполнено успешно, выполнено с ошибкой
+  //Знает, в каких состояниях может находиться Future
+  //и показал обработку каждого из них в коде.
+  //Ожидание, выполнено успешно, выполнено с ошибкой
+  await printOrderMessage();
+
+  //конструкторы
+
+  //Future<T>.delayed()
+  Future.delayed(const Duration(seconds: 1), () {
+    print('Прошла одна секунда.'); // Печатает через 1 секунду.
+  });
+
+  //Future<T>.sync()
+  Future.sync(() => 5).then(print);
+
+  //Future<T>.microTask()
+  Future.microtask(() => 7).then(print);
+
+  //Future<T>.value constructor
+  final resultGetFuture = await getFuture();
+  print(resultGetFuture);
+
+  //Future<T>.error constructor
+  final error = await getFutureError();
+  print(error);
+
+  /////////////////////////////////////////////////////////////////
+  ///////////////////// n u l l   S a f e t y /////////////////////
+  // ?
+  String? name;
+  print(name);
+  name = "Tom";
+  print(name);
+  // !
+  int? a = 23;
+  int b = a!; // мы уверены, что a не равна null
+  print(b);
+  //??
+  int? number1 = 23;
+  int number2 = number1 ?? 0;
+  print(number2);        // 23
+
+  number1 = null;
+  number2 = number1 ?? 0;
+  print(number2);        // 0
+  // ?.
+  name=null;
+  print(name?.toUpperCase());
+  // вызов метода у nullable типа не работает
+  // поэтому нужно добавить ?
+  // !
+  print(name!.toUpperCase()); //exs
+  // дженерики
+  var box = Box<int?>.full(null);
+  print(box.unbox());
+  //map
+  var map = {'key': 'value'};
+  print(map['key']!.length); // OK.
+  // Using null safety, incorrectly:
+  //print(map['key'].length); // Error.
 }
