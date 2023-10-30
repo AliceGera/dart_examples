@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:core';
+
 import 'package:cli/OOP/association.dart';
 import 'package:cli/OOP/oop.dart';
 import 'package:cli/SOLID/dependency_inversion_principle.dart';
@@ -201,26 +205,153 @@ Future<void> main() async {
   //??
   int? number1 = 23;
   int number2 = number1 ?? 0;
-  print(number2);        // 23
+  print(number2); // 23
 
   number1 = null;
   number2 = number1 ?? 0;
-  print(number2);        // 0
+  print(number2); // 0
   // ?.
-  name=null;
+  name = null;
   print(name?.toUpperCase());
   // вызов метода у nullable типа не работает
   // поэтому нужно добавить ?
   // !
-  print(name!.toUpperCase()); //exs
+  // print(name!.toUpperCase()); //exs
   // дженерики
   var box = Box<int?>.full(null);
   print(box.unbox());
   //map
   var map = {'key': 'value'};
+  print('map[' ']!.length');
   print(map['key']!.length); // OK.
   // Using null safety, incorrectly:
   //print(map['key'].length); // Error.
 
+  ////////////////////////////////////////////////////////////
+  /////////////// C O L L E C T I O N S //////////////////////
 
+  //L I S T
+  List<String> list1 = [];
+  List<int> list2 = [1, 3, 4, 2];
+  final fixedLengthList = List<int>.filled(5, 0); // Creates fixed-length list.
+  print(fixedLengthList); // [0, 0, 0, 0, 0]
+  fixedLengthList[0] = 87;
+  fixedLengthList.setAll(1, [1, 2, 3]);
+  print(fixedLengthList); // [87, 1, 2, 3, 0]
+  final growableList = <String>['A', 'B'];
+  growableList[0] = 'G';
+  print(growableList); // [G, B]
+  growableList.add('X');
+  growableList.addAll({'C', 'B'});
+  print(growableList); // [G, B, X, C, B]
+  ////////////constructors
+  //empty
+  final growableListEmpty = List.empty(growable: true); // []
+  growableListEmpty.add(1); // [1]
+  final fixedLengthListEmpty = List.empty(growable: false);
+  //fixedLengthListEmpty.add(1); // error
+  //filled
+  final zeroList = List<int>.filled(3, 0, growable: true); // [0, 0, 0]
+  final shared = List.filled(3, []);
+  shared[0].add(499);
+  print(shared); // [[499], [499], [499]]
+  final unique = List.generate(3, (_) => []);
+  unique[0].add(499);
+  print(unique); // [[499], [], []]
+  //from
+  final numbers = <num>[1, 2, 3];
+  final listFrom = List<int>.from(numbers);
+  print(listFrom); // [1, 2, 3]
+  const jsonArray = '''
+  [{"text": "foo", "value": 1, "status": true},
+   {"text": "bar", "value": 2, "status": false}]
+   ''';
+  final List<dynamic> dynamicList = jsonDecode(jsonArray);
+  final List<Map<String, dynamic>> fooData = List.from(dynamicList.where((x) => x is Map && x['text'] == 'foo'));
+  print(fooData);
+  //generate
+  final growableListGenerate = List<int>.generate(3, (int index) => index * index, growable: true);
+  print(growableListGenerate); // [0, 1, 4]
+  final fixedLengthListGenerate = List<int>.generate(3, (int index) => index * index, growable: false);
+  print(fixedLengthListGenerate); // [0, 1, 4]
+  //of
+  final numbersOf = <int>[1, 2, 3];
+  final listOf = List<num>.of(numbersOf);
+  print(listOf); // [1, 2, 3]
+  //unmodifiable
+  final numbersUnmodifiable = <int>[1, 2, 3];
+  final unmodifiableList = List.unmodifiable(numbersUnmodifiable); // [1, 2, 3]
+  //unmodifiableList[1] = 87; // error.
+
+  // M A P
+  Map<int, String> map1 = {};
+  var map2 = <int, String>{};
+  var map3 = {};
+  var map5 = {1: "Tom", 2: "Bob", 3: "Sam"};
+  ////////////constructors
+  //from
+  final planets = <num, String>{1: 'Mercury', 2: 'Venus', 3: 'Earth', 4: 'Mars'};
+  final mapFrom = Map<int, String>.from(planets);
+  //fromEntries
+  final moonCount = <String, int>{
+    'Mercury': 0,
+    'Venus': 0,
+    'Earth': 1,
+    'Mars': 2,
+    'Jupiter': 79,
+    'Saturn': 82,
+    'Uranus': 27,
+    'Neptune': 14,
+  };
+  final mapFromEntries = Map.fromEntries(moonCount.entries);
+  //fromIterable
+  final numbersFromIterable = <int>[1, 2, 3];
+  final mapFromIterable = Map<String, int>.fromIterable(numbersFromIterable, key: (item) => item.toString(), value: (item) => item * item);
+  print(mapFromIterable); // {1: 1, 2: 4, 3: 9}
+  //fromIterables
+  final rings = <bool>[false, false, true, true];
+  final planetsFromIterables = <String>{'Earth', 'Mars', 'Jupiter', 'Saturn'};
+  final mapFromIterables = Map<String, bool>.fromIterables(planetsFromIterables, rings);
+  print(mapFromIterables); // {Earth: false, Mars: false, Jupiter: true, Saturn: true}
+  //of
+  final planetsOf = <int, String>{1: 'Mercury', 2: 'Venus', 3: 'Earth'};
+  final mapOf = Map<num, String>.of(planetsOf);
+  print(mapOf); // {1: Mercury, 2: Venus, 3: Earth}
+  //unmodifiable
+  final planetsUnmodifiable = <int, String>{1: 'Mercury', 2: 'Venus', 3: 'Earth'};
+  final unmodifiableMap = Map.unmodifiable(planetsUnmodifiable);
+  // unmodifiableMap[4] = 'Mars'; error
+
+  // S E T
+  final planets1 = <String>{}; // LinkedHashSet
+  final copySet = planets1.toSet();
+  ////////////constructors
+  //from
+  final numbersFrom = <num>{10, 20, 30};
+  final setFrom = Set<int>.from(numbersFrom); //{10, 20, 30}
+  //of
+  final baseSet = <int>{1, 2, 3};
+  final setOf = Set<num>.of(baseSet); //{1, 2, 3}
+  //unmodifiable
+  final characters = <String>{'A', 'B', 'C'};
+  final unmodifiableSet = Set.unmodifiable(characters); //{'A', 'B', 'C'}
+
+  final List<String> listString = ["1", "2"];
+  final List<int> newList = listString.map((e) => int.parse(e)).toList();
+  //В примере, использовав один метод, отфильтровал значения, опираясь на предикат
+  // (например, из списка List<int> получить только чётные числа).
+  List<int> list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  list.removeWhere((item) => item % 2 != 0);
+  print(list);
+  //В примере, использовав один метод,
+  //проверил существует ли определённый элемент внутри коллекции.
+  bool isContains = unmodifiableSet.contains('A');
+  print(isContains);
+
+//В примере использовал операторы spread ("..."),
+// control flow и циклы внутри коллекций.
+  var mapFirst = {'a': 'apple', 'b': 'banana'};
+  var mapSecond = {'c': 'cherry', 'd': 'date'};
+  var combinedMap = {...mapFirst, ...mapSecond};
+  print(combinedMap);
 }
